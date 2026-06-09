@@ -1,12 +1,19 @@
 import path from "path";
+import fs from "fs";
 import multer from "multer";
 import { v4 as uuid } from "uuid";
 
 const allowedMime = new Set(["application/pdf"]);
 const allowedExtensions = new Set([".pdf"]);
 
+// Ensure uploads directory exists (important for cloud deployments like Render)
+const uploadDir = path.resolve("uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
-  destination: "uploads",
+  destination: uploadDir,
   filename: (_req, file, cb) => cb(null, `${uuid()}${path.extname(file.originalname).toLowerCase()}`)
 });
 
