@@ -21,8 +21,11 @@ export function createApp() {
   const configuredOrigins = (process.env.CLIENT_URL || "").split(",").map((origin) => origin.trim()).filter(Boolean);
   const allowedOrigins = new Set(configuredOrigins);
   const devOriginPattern = /^http:\/\/(localhost|127\.0\.0\.1|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):(3000|4173|5173|5174|5175)$/;
+  const vercelPattern = /^https:\/\/.*\.vercel\.app$/;
   const isAllowedOrigin = (origin) => {
-    if (!origin || allowedOrigins.has(origin)) return true;
+    if (!origin) return true;
+    if (allowedOrigins.has(origin)) return true;
+    if (vercelPattern.test(origin)) return true;
     return process.env.NODE_ENV !== "production" && devOriginPattern.test(origin);
   };
 
