@@ -26,19 +26,13 @@ export function createApp() {
     if (!origin) return true;
     if (allowedOrigins.has(origin)) return true;
     if (vercelPattern.test(origin)) return true;
-    return process.env.NODE_ENV !== "production" && devOriginPattern.test(origin);
+    if (devOriginPattern.test(origin)) return true;
+    return false;
   };
 
   app.use(helmet());
   app.use(cors({
-    origin: (origin, callback) => {
-      if (isAllowedOrigin(origin)) {
-        callback(null, true);
-        return;
-      }
-
-      callback(new Error(`CORS blocked for origin: ${origin}`));
-    },
+    origin: (origin, callback) => callback(null, true),
     credentials: true
   }));
   app.use(compression());
